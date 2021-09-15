@@ -1,6 +1,7 @@
 import 'package:app_arquiteture/app/app_controller.dart';
 import 'package:app_arquiteture/app/app_theme.dart';
 import 'package:app_arquiteture/app/models/apiadvisor_model.dart';
+import 'package:app_arquiteture/app/pages/home/components/custom_circular_progress_indicator_widget.dart';
 import 'package:app_arquiteture/app/pages/home/home_controller.dart';
 import 'package:app_arquiteture/app/repositories/apiadvisor_repository.dart';
 import 'package:app_arquiteture/app/services/client_http_service.dart';
@@ -26,6 +27,18 @@ class _HomePageState extends State<HomePage> {
     ),
   );
 
+  bool isLoading = false;
+
+  login() async {
+    setState(() {
+      isLoading = true;
+    });
+    await controller.getTime();
+    // setState(() {
+    //   isLoading = false;
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
@@ -50,7 +63,7 @@ class _HomePageState extends State<HomePage> {
           floatingActionButton: FloatingActionButton(
             child: FaIcon(FontAwesomeIcons.temperatureLow),
             onPressed: () {
-              controller.getTime();
+              login();
             },
           ),
           body: ValueListenableBuilder<ApiadvisorModel?>(
@@ -62,15 +75,21 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(15.0),
-                        child: Text(
-                          'Clique no termometro para obter a notícia do tempo.',
-                          style: AppTheme.textIntro,
-                          textAlign: TextAlign.center,
-                        ),
+                        child: isLoading
+                            ? Center(
+                                child: CustomCircularProgressIndicator(),
+                              )
+                            : Text(
+                                'Clique no termometro para obter a notícia do tempo.',
+                                style: AppTheme.textIntro,
+                                textAlign: TextAlign.center,
+                              ),
                       ),
-                      Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      // isLoading
+                      //     ? Center(
+                      //         child: CustomCircularProgressIndicator(),
+                      //       )
+                      //     : Container(),
                     ],
                   );
                 }
